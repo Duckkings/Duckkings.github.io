@@ -1,12 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的网站</title>
-  </head>
-  <body>
-    <h1>欢迎来到我的网站 @Duckkings</h1>
-    <p>这是使用 GitHub Pages 搭建的简单网站。</p>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的网站</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: linear-gradient(120deg, #89f7fe, #66a6ff);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      text-align: center;
+      font-size: 2em;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    .shape {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      opacity: 0.8;
+      pointer-events: none;
+      transition: transform 0.2s ease-out;
+    }
+    .shape.one { background: rgba(255, 255, 255, 0.6); }
+    .shape.two { background: rgba(255, 255, 255, 0.4); width: 40px; height: 40px; }
+    .shape.three { background: rgba(255, 255, 255, 0.2); width: 80px; height: 80px; }
+  </style>
+</head>
+<body>
+  <div class="center-text">欢迎来到我的网站 @Duckkings &amp; @Darkflameblazer</div>
+  <div class="shape one"></div>
+  <div class="shape two"></div>
+  <div class="shape three"></div>
+  <script>
+    const shapes = document.querySelectorAll('.shape');
+    document.addEventListener('mousemove', (e) => {
+      const { clientX: x, clientY: y } = e;
+      shapes.forEach((shape, index) => {
+        const factor = (index + 1) * 0.05;
+        const moveX = (x - window.innerWidth / 2) * factor;
+        const moveY = (y - window.innerHeight / 2) * factor;
+        shape.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      });
+    });
+  </script>
+</body>
 </html>
