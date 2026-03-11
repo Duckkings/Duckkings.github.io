@@ -1,55 +1,807 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的网站</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>吴鑫航 | 战斗策划 / Combat Designer</title>
+  <meta name="description" content="吴鑫航（Duckkings / Doomslayer）｜战斗策划。机甲3C、第三人称射击武器、怪物与Boss设计、技能编辑、行为树、配置链路。" />
+  <meta name="theme-color" content="#0b1020" />
+
   <style>
-    html, body {
-      height: 100%;
+    :root {
+      --bg: #0b1020;
+      --bg2: #0a1630;
+      --card: rgba(255, 255, 255, 0.06);
+      --card2: rgba(255, 255, 255, 0.09);
+      --text: rgba(255, 255, 255, 0.92);
+      --muted: rgba(255, 255, 255, 0.72);
+      --faint: rgba(255, 255, 255, 0.55);
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #7c5cff;
+      --accent2: #17d1ff;
+      --good: #2ee59d;
+      --warn: #ffcc66;
+      --shadow: 0 20px 80px rgba(0,0,0,0.55);
+      --radius: 18px;
+      --radius2: 26px;
+      --max: 1120px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
       margin: 0;
-      background: linear-gradient(120deg, #89f7fe, #66a6ff);
-      overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(124, 92, 255, 0.25), transparent 55%),
+        radial-gradient(1000px 700px at 85% 20%, rgba(23, 209, 255, 0.18), transparent 60%),
+        radial-gradient(900px 700px at 55% 95%, rgba(46, 229, 157, 0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      overflow-x: hidden;
     }
-    .center-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #fff;
-      text-align: center;
-      font-size: 2em;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    .shape {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      opacity: 0.8;
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+    .noise {
+      position: fixed;
+      inset: 0;
       pointer-events: none;
-      transition: transform 0.2s ease-out;
+      opacity: 0.06;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
     }
-    .shape.one { background: rgba(255, 255, 255, 0.6); }
-    .shape.two { background: rgba(255, 255, 255, 0.4); width: 40px; height: 40px; }
-    .shape.three { background: rgba(255, 255, 255, 0.2); width: 80px; height: 80px; }
+
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(8, 12, 24, 0.55);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 220px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 99px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 6px rgba(124,92,255,0.10);
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.05;
+    }
+
+    .brand-title strong { font-size: 14px; letter-spacing: 0.2px; }
+    .brand-title span { font-size: 12px; color: var(--muted); }
+
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+
+    .pill:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.18);
+      text-decoration: none;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .pill.primary {
+      border-color: rgba(124, 92, 255, 0.45);
+      background: linear-gradient(135deg, rgba(124,92,255,0.18), rgba(23,209,255,0.10));
+      color: rgba(255,255,255,0.92);
+    }
+
+    .hero {
+      padding: 54px 0 28px;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-inner { padding: 22px; }
+
+    .kicker {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.68);
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 10px;
+      font-size: 38px;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .tag {
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.80);
+    }
+
+    .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+    .avatar {
+      height: 100%;
+      min-height: 240px;
+      position: relative;
+      background:
+        radial-gradient(900px 500px at 40% 15%, rgba(124, 92, 255, 0.24), transparent 55%),
+        radial-gradient(900px 500px at 60% 85%, rgba(23, 209, 255, 0.18), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    }
+
+    .avatar .panel-inner {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .mini {
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.14);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .stat {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .stat .mini { padding: 12px; }
+    .stat strong { display: block; font-size: 18px; }
+    .stat span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+
+    section { padding: 22px 0; }
+
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 12px 0 14px;
+    }
+    .section-title h2 { margin: 0; font-size: 18px; letter-spacing: -0.01em; }
+    .section-title p { margin: 0; color: var(--muted); font-size: 13px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.05);
+      overflow: hidden;
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(255,255,255,0.20);
+    }
+
+    .thumb {
+      height: 140px;
+      background:
+        radial-gradient(700px 300px at 30% 10%, rgba(124, 92, 255, 0.30), transparent 55%),
+        radial-gradient(700px 300px at 70% 90%, rgba(23, 209, 255, 0.22), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-end;
+      padding: 12px;
+      gap: 10px;
+    }
+
+    .thumb-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(255,255,255,0.85);
+      padding: 6px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(0,0,0,0.22);
+    }
+
+    .card-body { padding: 12px; }
+    .card h3 { margin: 0 0 6px; font-size: 15px; }
+    .card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .card .meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .meta a {
+      color: rgba(255,255,255,0.85);
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.16);
+    }
+
+    .meta a:hover { text-decoration: none; border-color: rgba(124,92,255,0.45); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .li {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.04);
+      padding: 12px;
+    }
+
+    .li strong { display: block; font-size: 13px; }
+    .li span { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+
+    footer {
+      padding: 28px 0 40px;
+      color: rgba(255,255,255,0.60);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+      margin-top: 14px;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.60);
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-card {
+      width: min(980px, 100%);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(10, 16, 32, 0.92);
+      box-shadow: 0 30px 120px rgba(0,0,0,0.65);
+      overflow: hidden;
+    }
+
+    .modal-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .modal-top strong { font-size: 13px; letter-spacing: 0.2px; }
+    .modal-top button {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.85);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+
+    .modal-body { padding: 16px; display: grid; gap: 10px; }
+    .modal-body p { margin: 0; color: var(--muted); line-height: 1.7; font-size: 14px; }
+
+    .kbd {
+      font-family: var(--mono);
+      font-size: 11px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.24);
+      padding: 3px 6px;
+      border-radius: 8px;
+      color: rgba(255,255,255,0.75);
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .row { grid-template-columns: 1fr; }
+      h1 { font-size: 32px; }
+      .brand { min-width: unset; }
+    }
+
+    @media (max-width: 560px) {
+      .grid { grid-template-columns: 1fr; }
+      .navlinks { display: none; }
+      header { position: relative; }
+      .hero { padding-top: 26px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; transition: none !important; }
+    }
   </style>
 </head>
+
 <body>
-  <div class="center-text">欢迎来到我的网站 @Duckkings &amp; @Darkflameblazer</div>
-  <div class="shape one"></div>
-  <div class="shape two"></div>
-  <div class="shape three"></div>
+  <div class="noise"></div>
+
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="#top" aria-label="Back to top">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="brand-title">
+            <strong>吴鑫航</strong>
+            <span>战斗策划 / Combat Designer · Duckkings</span>
+          </span>
+        </a>
+
+        <nav class="navlinks" aria-label="Primary">
+          <a class="pill" href="#projects">作品</a>
+          <a class="pill" href="#now">正在做</a>
+          <a class="pill" href="#skills">技能栈</a>
+          <a class="pill" href="#contact">联系</a>
+          <a class="pill primary" href="https://github.com/Duckkings" target="_blank" rel="noreferrer">GitHub</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="container">
+      <section class="hero">
+        <div class="hero-grid">
+          <div class="panel">
+            <div class="panel-inner">
+              <div class="kicker">combat design · boss design · mech 3C</div>
+              <h1>做“好打、好读、好调”的战斗。</h1>
+              <p class="subtitle">
+                我是吴鑫航（Duckkings / Doomslayer），战斗策划。
+                擅长机甲 3C、第三人称射击武器、怪物与 Boss 机制、技能编辑、行为树与配置链路。
+                目标：让玩家在 <b>读招</b>、<b>操作</b> 与 <b>反馈</b> 之间形成干净的闭环。
+              </p>
+
+              <div class="tags" aria-label="Highlights">
+                <span class="tag">机甲 3C / 镜头</span>
+                <span class="tag">Boss 机制 / 世界 Boss</span>
+                <span class="tag">武器 / 技能 / 数值与表现</span>
+                <span class="tag">行为树 / 模板化</span>
+                <span class="tag">ARPG / 类魂 / TPS</span>
+              </div>
+
+              <div class="cta">
+                <a class="pill primary" href="#projects">看作品</a>
+                <a class="pill" href="#contact">联系我</a>
+                <a class="pill" href="https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular" target="_blank" rel="noreferrer">AC6 Mod（Nexus）</a>
+              </div>
+            </div>
+          </div>
+
+          <aside class="panel avatar">
+            <div class="panel-inner">
+              <div class="mini">
+                <div class="kicker">Now</div>
+                <div style="margin-top:8px; font-size:14px; color: rgba(255,255,255,0.88); line-height:1.55;">
+                  正在参与：<b>星际理想国</b>（战斗策划）
+                  <div style="margin-top:6px; color: rgba(255,255,255,0.70); font-size:12px;">
+                    （你可以告诉我：项目对外可公开的介绍、平台、品类、负责模块，我会把这块写成更漂亮的一段。）
+                  </div>
+                </div>
+              </div>
+
+              <div class="stat" aria-label="Quick stats">
+                <div class="mini">
+                  <strong>7th</strong>
+                  <span>Nexus｜AC6 分区热门 Mod</span>
+                </div>
+                <div class="mini">
+                  <strong>多次</strong>
+                  <span>GameJam｜策划+程序落地</span>
+                </div>
+              </div>
+
+              <div class="mini" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="display:grid; gap:4px;">
+                  <div class="kicker">Tip</div>
+                  <div style="color: var(--muted); font-size:12px; line-height:1.55;">点击作品卡片可展开详情。<span class="kbd">Esc</span> 关闭。</div>
+                </div>
+                <a class="pill" href="#projects" style="white-space:nowrap;">↓</a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="projects">
+        <div class="section-title">
+          <h2>作品 / Projects</h2>
+          <p>可点击卡片查看详情与链接（支持后续加截图、视频、二维码）。</p>
+        </div>
+
+        <div class="grid" id="projectsGrid" aria-label="Projects grid"></div>
+      </section>
+
+      <section id="now">
+        <div class="section-title">
+          <h2>我现在在做什么</h2>
+          <p>把“星际理想国”写成对外展示的版本。</p>
+        </div>
+
+        <div class="row">
+          <div class="li">
+            <strong>星际理想国（进行中）</strong>
+            <span>
+              目前这块我先放了一个占位文案。你给我 4 条信息，我就能写成一段很“像样”的对外介绍：
+              <br />① 游戏品类（例如 MMO / ARPG / TPS / 机甲）
+              <br />② 平台（PC/主机/移动）
+              <br />③ 你负责的模块（Boss/武器/3C/副本/世界Boss等）
+              <br />④ 你最能拿出来说的 2~3 个产出（可量化最好）
+            </span>
+          </div>
+
+          <div class="li">
+            <strong>简历与作品集</strong>
+            <span>
+              你这份履历很强（Boss、行为树、机甲 3C、展会 Boss、世界 Boss 玩法）。
+              下一步可以把“职责”改成“成果+影响”，并把作品统一成一个入口（本页）。
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills">
+        <div class="section-title">
+          <h2>技能栈 / Skillset</h2>
+          <p>偏战斗：机制、表现、逻辑、调优、模板化。</p>
+        </div>
+
+        <div class="row">
+          <ul class="list" aria-label="Design skills">
+            <li class="li"><strong>战斗机制设计</strong><span>Boss/NPC 行为与机制、世界 Boss/大型 Boss、多阶段与读招节奏、风险回报设计。</span></li>
+            <li class="li"><strong>机甲 3C / 镜头</strong><span>移动/转向/加速/锁定/镜头跟随与调优，兼顾手感与信息读取。</span></li>
+            <li class="li"><strong>武器与技能</strong><span>第三人称射击武器、技能编辑、数值与表现协同，强调反馈一致性。</span></li>
+          </ul>
+
+          <ul class="list" aria-label="Implementation skills">
+            <li class="li"><strong>行为树 / 模板化</strong><span>行为树模板设计与制作，复用链路、易调参、可扩展的模块拆分。</span></li>
+            <li class="li"><strong>配置链路</strong><span>配置设计与联调，关注可维护性与团队协作成本。</span></li>
+            <li class="li"><strong>策划+程序落地</strong><span>GameJam 项目排期与管理、方案拆解、快速实现与交付。</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="contact">
+        <div class="section-title">
+          <h2>联系 / Contact</h2>
+          <p>把机会丢过来，我会很快回复。</p>
+        </div>
+
+        <div class="row">
+          <div class="li">
+            <strong>Email</strong>
+            <span><a href="mailto:darknessdoomslayer@outlook.com">darknessdoomslayer@outlook.com</a></span>
+          </div>
+          <div class="li">
+            <strong>微信</strong>
+            <span>Doomslayer621（可在作品卡片里加二维码图）</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 12px;" class="li">
+          <strong>其他链接</strong>
+          <span>
+            GitHub：<a href="https://github.com/Duckkings" target="_blank" rel="noreferrer">https://github.com/Duckkings</a>
+            <br />Nexus（AC6 Mod）：<a href="https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular" target="_blank" rel="noreferrer">作品页</a>
+            <br />Bilibili（打击感拆解）：<a href="https://bilibili.com/video/BV17ZUuBLEWs/" target="_blank" rel="noreferrer">忍龙4</a> / <a href="https://bilibili.com/video/BV1t8qWB6EzR/" target="_blank" rel="noreferrer">卡赞</a>
+          </span>
+        </div>
+      </section>
+
+      <footer>
+        <div class="container" style="padding:0;">
+          <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;">
+            <span>© <span id="year"></span> 吴鑫航 · Duckkings</span>
+            <span style="font-family: var(--mono);">Built with plain HTML/CSS/JS · GitHub Pages</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Project details">
+    <div class="modal-card">
+      <div class="modal-top">
+        <strong id="modalTitle">Project</strong>
+        <button id="modalClose" aria-label="Close">关闭 <span class="kbd">Esc</span></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
   <script>
-    const shapes = document.querySelectorAll('.shape');
-    document.addEventListener('mousemove', (e) => {
-      const { clientX: x, clientY: y } = e;
-      shapes.forEach((shape, index) => {
-        const factor = (index + 1) * 0.05;
-        const moveX = (x - window.innerWidth / 2) * factor;
-        const moveY = (y - window.innerHeight / 2) * factor;
-        shape.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    // ====== Content data: 编辑这里就能更新作品展示 ======
+    const PROJECTS = [
+      {
+        id: 're-ac6',
+        title: '装甲核心 6 · Re-AC6 玩法大修 Mod',
+        badge: 'Mod',
+        year: '2023.10 - 2024.06',
+        summary: '调整玩法、提升装备差异性，重做数值与表现，让手感更符合玩家预期。Nexus 分区热门第 7。',
+        tags: ['机甲', '数值与表现', '玩法调优'],
+        links: [
+          { label: 'Nexus', url: 'https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular' },
+          { label: 'GitHub Pages', url: 'https://duckkings.github.io/' }
+        ],
+        detail: [
+          '做了什么：重做装备数值与表现、强化差异化、调整玩法节奏与手感。',
+          '结果：NexusMod 装甲核心 6 分区最受欢迎 Mod 第 7 位。',
+          '可补充：你愿意的话，把“关键改动列表 / 前后对比 / 数据截图”发我，我可以把这一块写成更有说服力的展示。'
+        ]
+      },
+      {
+        id: 'elden-pvp',
+        title: '法环 PVP 平衡修改建议（文档）',
+        badge: 'Doc',
+        year: '2022.12 - 2023.04',
+        summary: '列举当前问题并拟定修改建议，协作翻译与撰写整篇文章。',
+        tags: ['PVP 平衡', '问题拆解', '文档表达'],
+        links: [
+          { label: 'Docs', url: 'https://docs.qq.com/doc/DTk5yTVlvVVdKSWhr' }
+        ],
+        detail: [
+          '做了什么：问题列表化、提出改动方向、与合作者分工并完成撰写与翻译。',
+          '可以补强：挑 3 条“最有洞见/最可落地”的建议做成摘要。'
+        ]
+      },
+      {
+        id: 'booomjam',
+        title: '机核 BOOOMJAM 2025 ·《献眸者》',
+        badge: 'GameJam',
+        year: '2025.04 - 2025.05',
+        summary: '项目排期与管理，将想法拆解为可实现方案并落地；战斗玩法设计与开发制作。',
+        tags: ['策划+程序', '排期管理', '战斗玩法'],
+        links: [
+          { label: 'Gcores', url: 'https://www.gcores.com/games/148193' }
+        ],
+        detail: [
+          '角色：策划、程序。',
+          '产出：排期与管理、战斗玩法方案拆解、实现与交付。'
+        ]
+      },
+      {
+        id: 'ciga48',
+        title: 'CIGA 48 小时 ·《伊丽莎白精神病院》',
+        badge: 'GameJam',
+        year: '2025.06',
+        summary: '控制器设计与开发。',
+        tags: ['输入方案', '快速落地'],
+        links: [
+          { label: 'GMHub', url: 'https://www.gmhub.com/game/7803' }
+        ],
+        detail: [
+          '角色：策划、程序。',
+          '产出：控制器设计与开发。'
+        ]
+      },
+      {
+        id: 'gmk2025',
+        title: 'GMTK 2025 GameJam · Switchguner',
+        badge: 'GameJam',
+        year: '2025.07 - 2025.08',
+        summary: '在模仿《血腥大陆》的基础上设计了新的玩法，并完成实现。',
+        tags: ['玩法设计', '快速迭代'],
+        links: [
+          { label: 'itch.io', url: 'https://duckkingsdfb.itch.io/switchguner' }
+        ],
+        detail: [
+          '做了什么：基于参考玩法提出变化点，并完成实现。',
+          '可以补强：加入 1 段“设计目标/限制/核心 loop”的三段式说明。'
+        ]
+      },
+      {
+        id: 'combat-breakdown',
+        title: '忍龙 4 / 卡赞 打击感拆解（视频）',
+        badge: 'Video',
+        year: '2025',
+        summary: '从读招、镜头、音画反馈、硬直与判定等角度拆解打击感。',
+        tags: ['打击感', '分析', '表达'],
+        links: [
+          { label: '忍龙4', url: 'https://bilibili.com/video/BV17ZUuBLEWs/' },
+          { label: '卡赞', url: 'https://bilibili.com/video/BV1t8qWB6EzR/' }
+        ],
+        detail: [
+          '建议：把你的结论提炼成 6~10 条“可复用的设计原则”，会非常加分。'
+        ]
+      }
+    ];
+
+    // ====== Render ======
+    const grid = document.getElementById('projectsGrid');
+    const yearEl = document.getElementById('year');
+    yearEl.textContent = new Date().getFullYear();
+
+    function el(tag, attrs = {}, children = []) {
+      const n = document.createElement(tag);
+      for (const [k, v] of Object.entries(attrs)) {
+        if (k === 'class') n.className = v;
+        else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+        else n.setAttribute(k, v);
+      }
+      for (const c of children) {
+        if (typeof c === 'string') n.appendChild(document.createTextNode(c));
+        else if (c) n.appendChild(c);
+      }
+      return n;
+    }
+
+    function openModal(project) {
+      const modal = document.getElementById('modal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      title.textContent = project.title;
+      body.innerHTML = '';
+
+      body.appendChild(el('p', {}, [project.summary]));
+
+      body.appendChild(el('div', { class: 'tags', style: 'margin-top:8px;' },
+        (project.tags || []).map(t => el('span', { class: 'tag' }, [t]))
+      ));
+
+      if (project.year) {
+        body.appendChild(el('p', {}, [`时间：${project.year}`]));
+      }
+
+      if (project.detail?.length) {
+        const ul = el('ul', { class: 'list', style: 'margin-top:8px;' },
+          project.detail.map(line => el('li', { class: 'li' }, [
+            el('span', { style: 'color: rgba(255,255,255,0.82); font-size: 13px; line-height: 1.6;' }, [line])
+          ]))
+        );
+        body.appendChild(ul);
+      }
+
+      if (project.links?.length) {
+        const links = el('div', { class: 'meta', style: 'margin-top:8px;' },
+          project.links.map(l => el('a', { href: l.url, target: '_blank', rel: 'noreferrer' }, [l.label]))
+        );
+        body.appendChild(links);
+      }
+
+      modal.classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    for (const p of PROJECTS) {
+      const card = el('article', { class: 'card', role: 'button', tabindex: '0' }, [
+        el('div', { class: 'thumb' }, [
+          el('span', { class: 'thumb-badge' }, [p.badge || 'Project']),
+          p.year ? el('span', { class: 'thumb-badge', style: 'opacity:0.85;' }, [p.year]) : null
+        ]),
+        el('div', { class: 'card-body' }, [
+          el('h3', {}, [p.title]),
+          el('p', {}, [p.summary]),
+          el('div', { class: 'meta' }, (p.links || []).slice(0, 2).map(l =>
+            el('a', { href: l.url, target: '_blank', rel: 'noreferrer', onclick: (ev) => ev.stopPropagation() }, [l.label])
+          ))
+        ])
+      ]);
+
+      card.addEventListener('click', () => openModal(p));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') openModal(p);
+      });
+
+      grid.appendChild(card);
+    }
+
+    // Smooth-ish anchor scroll (no heavy libs)
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        if (!id || id.length < 2) return;
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
   </script>
