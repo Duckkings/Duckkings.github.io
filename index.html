@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>吴鑫航 | 战斗策划 / Combat Designer</title>
-  <meta name="description" content="吴鑫航（Duckkings / Doomslayer）｜战斗策划。机甲3C、第三人称射击武器、怪物与Boss设计、技能编辑、行为树、配置链路。" />
+  <title>Duckkings | 战斗策划 / Combat Designer</title>
+  <meta name="description" content="Duckkings（Doomslayer）｜战斗策划。机甲3C、第三人称射击武器、怪物与Boss设计、技能编辑、行为树、配置链路。" />
   <meta name="theme-color" content="#0b1020" />
 
   <style>
@@ -246,13 +246,17 @@
     }
 
     .card {
+      display: block;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: rgba(255,255,255,0.05);
       overflow: hidden;
       transition: transform .15s ease, background .15s ease, border-color .15s ease;
       position: relative;
+      text-decoration: none;
     }
+
+    .card:hover { text-decoration: none; }
 
     .card:hover {
       transform: translateY(-2px);
@@ -417,8 +421,8 @@
         <a class="brand" href="#top" aria-label="Back to top">
           <span class="dot" aria-hidden="true"></span>
           <span class="brand-title">
-            <strong>吴鑫航</strong>
-            <span>战斗策划 / Combat Designer · Duckkings</span>
+            <strong>Duckkings</strong>
+            <span>战斗策划 / Combat Designer · Doomslayer</span>
           </span>
         </a>
 
@@ -442,7 +446,7 @@
               <div class="kicker">combat design · boss design · mech 3C</div>
               <h1>做“好打、好读、好调”的战斗。</h1>
               <p class="subtitle">
-                我是吴鑫航（Duckkings / Doomslayer），战斗策划。
+                我是 Duckkings（Doomslayer），战斗策划。
                 擅长机甲 3C、第三人称射击武器、怪物与 Boss 机制、技能编辑、行为树与配置链路。
                 目标：让玩家在 <b>读招</b>、<b>操作</b> 与 <b>反馈</b> 之间形成干净的闭环。
               </p>
@@ -586,7 +590,7 @@
       <footer>
         <div class="container" style="padding:0;">
           <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between;">
-            <span>© <span id="year"></span> 吴鑫航 · Duckkings</span>
+            <span>© <span id="year"></span> Duckkings</span>
             <span style="font-family: var(--mono);">Built with plain HTML/CSS/JS · GitHub Pages</span>
           </div>
         </div>
@@ -615,9 +619,9 @@
         summary: '调整玩法、提升装备差异性，重做数值与表现，让手感更符合玩家预期。Nexus 分区热门第 7。',
         tags: ['机甲', '数值与表现', '玩法调优'],
         links: [
-          { label: 'Nexus', url: 'https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular' },
-          { label: 'GitHub Pages', url: 'https://duckkings.github.io/' }
+          { label: 'Nexus', url: 'https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular' }
         ],
+        bg: 'https://image.thum.io/get/width/1600/https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular',
         detail: [
           '做了什么：重做装备数值与表现、强化差异化、调整玩法节奏与手感。',
           '结果：NexusMod 装甲核心 6 分区最受欢迎 Mod 第 7 位。',
@@ -634,6 +638,7 @@
         links: [
           { label: 'Docs', url: 'https://docs.qq.com/doc/DTk5yTVlvVVdKSWhr' }
         ],
+        bg: 'https://image.thum.io/get/width/1600/https://docs.qq.com/doc/DTk5yTVlvVVdKSWhr',
         detail: [
           '做了什么：问题列表化、提出改动方向、与合作者分工并完成撰写与翻译。',
           '可以补强：挑 3 条“最有洞见/最可落地”的建议做成摘要。'
@@ -649,6 +654,7 @@
         links: [
           { label: 'Gcores', url: 'https://www.gcores.com/games/148193' }
         ],
+        bg: 'https://image.thum.io/get/width/1600/https://www.gcores.com/games/148193',
         detail: [
           '角色：策划、程序。',
           '产出：排期与管理、战斗玩法方案拆解、实现与交付。'
@@ -664,6 +670,7 @@
         links: [
           { label: 'GMHub', url: 'https://www.gmhub.com/game/7803' }
         ],
+        bg: 'https://image.thum.io/get/width/1600/https://www.gmhub.com/game/7803',
         detail: [
           '角色：策划、程序。',
           '产出：控制器设计与开发。'
@@ -679,6 +686,7 @@
         links: [
           { label: 'itch.io', url: 'https://duckkingsdfb.itch.io/switchguner' }
         ],
+        bg: 'https://image.thum.io/get/width/1600/https://duckkingsdfb.itch.io/switchguner',
         detail: [
           '做了什么：基于参考玩法提出变化点，并完成实现。',
           '可以补强：加入 1 段“设计目标/限制/核心 loop”的三段式说明。'
@@ -695,6 +703,7 @@
           { label: '忍龙4', url: 'https://bilibili.com/video/BV17ZUuBLEWs/' },
           { label: '卡赞', url: 'https://bilibili.com/video/BV1t8qWB6EzR/' }
         ],
+        bg: 'https://image.thum.io/get/width/1600/https://bilibili.com/video/BV17ZUuBLEWs/',
         detail: [
           '建议：把你的结论提炼成 6~10 条“可复用的设计原则”，会非常加分。'
         ]
@@ -770,25 +779,31 @@
       if (e.key === 'Escape') closeModal();
     });
 
+    function projectPage(p) {
+      return `./p.html?id=${encodeURIComponent(p.id)}`;
+    }
+
     for (const p of PROJECTS) {
-      const card = el('article', { class: 'card', role: 'button', tabindex: '0' }, [
-        el('div', { class: 'thumb' }, [
+      const href = projectPage(p);
+
+      const tagLinks = (p.tags || []).slice(0, 6).map(t =>
+        el('a', { class: 'tag', href }, [t])
+      );
+
+      const card = el('a', { class: 'card', href, 'aria-label': `Open project: ${p.title}` }, [
+        el('div', { class: 'thumb', style: p.bg ? `background-image:url(${p.bg}); background-size:cover; background-position:center;` : '' }, [
           el('span', { class: 'thumb-badge' }, [p.badge || 'Project']),
           p.year ? el('span', { class: 'thumb-badge', style: 'opacity:0.85;' }, [p.year]) : null
         ]),
         el('div', { class: 'card-body' }, [
           el('h3', {}, [p.title]),
           el('p', {}, [p.summary]),
+          el('div', { class: 'tags', style: 'margin-top:10px;' }, tagLinks),
           el('div', { class: 'meta' }, (p.links || []).slice(0, 2).map(l =>
             el('a', { href: l.url, target: '_blank', rel: 'noreferrer', onclick: (ev) => ev.stopPropagation() }, [l.label])
           ))
         ])
       ]);
-
-      card.addEventListener('click', () => openModal(p));
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') openModal(p);
-      });
 
       grid.appendChild(card);
     }

@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>作品展示 | Duckkings</title>
+  <meta name="theme-color" content="#0b1020" />
+  <style>
+    :root {
+      --bg: #070a14;
+      --card: rgba(255,255,255,0.08);
+      --line: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.72);
+      --accent: #7c5cff;
+      --accent2: #17d1ff;
+      --shadow: 0 24px 120px rgba(0,0,0,0.62);
+      --radius: 20px;
+      --max: 1080px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      background: center/cover no-repeat;
+      filter: blur(8px) saturate(1.2);
+      transform: scale(1.08);
+      opacity: 0.35;
+      z-index: -2;
+    }
+
+    .veil {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(1000px 600px at 20% 10%, rgba(124,92,255,0.22), transparent 55%),
+        radial-gradient(1000px 600px at 90% 25%, rgba(23,209,255,0.18), transparent 60%),
+        linear-gradient(180deg, rgba(7,10,20,0.88), rgba(7,10,20,0.92));
+      z-index: -1;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+    .container { max-width: var(--max); margin: 0 auto; padding: 0 18px; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(8, 12, 24, 0.52);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 6px rgba(124,92,255,0.10);
+    }
+
+    .title { display: grid; gap: 2px; }
+    .title strong { font-size: 13px; letter-spacing: 0.2px; }
+    .title span { font-size: 12px; color: var(--muted); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.86);
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(124,92,255,0.45);
+    }
+
+    main { padding: 26px 0 42px; }
+
+    .hero {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-top {
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .kicker {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.68);
+    }
+
+    h1 { margin: 8px 0 0; font-size: 24px; letter-spacing: -0.02em; }
+
+    .content { padding: 18px; display: grid; gap: 12px; }
+
+    .desc { margin: 0; color: var(--muted); line-height: 1.7; font-size: 14px; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tag {
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.82);
+    }
+
+    .links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .points {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .li {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.16);
+      border-radius: var(--radius);
+      padding: 12px;
+      color: rgba(255,255,255,0.84);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .hint {
+      margin-top: 10px;
+      color: rgba(255,255,255,0.58);
+      font-size: 12px;
+    }
+
+    .error {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      border-radius: 18px;
+      padding: 16px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" id="bg"></div>
+  <div class="veil"></div>
+
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="./#projects" aria-label="Back">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="title">
+            <strong>Duckkings · 作品展示</strong>
+            <span>点击返回主页 · Projects</span>
+          </span>
+        </a>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+          <a class="pill" href="./#projects">← 返回主页</a>
+          <a class="pill" id="openLink" href="#" target="_blank" rel="noreferrer" style="display:none;">打开作品链接</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div id="app"></div>
+    </div>
+  </main>
+
+  <script>
+    // 从主页同步一份数据（为了简单：这里复制一份项目表；后续也可以抽到 projects.js）
+    const PROJECTS = [
+      {
+        id: 're-ac6',
+        title: '装甲核心 6 · Re-AC6 玩法大修 Mod',
+        badge: 'Mod',
+        year: '2023.10 - 2024.06',
+        summary: '调整玩法、提升装备差异性，重做数值与表现，让手感更符合玩家预期。Nexus 分区热门第 7。',
+        tags: ['机甲', '数值与表现', '玩法调优'],
+        links: [
+          { label: 'Nexus', url: 'https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular' }
+        ],
+        // 背景截图来源：thum.io（第三方缩略图服务）
+        bg: 'https://image.thum.io/get/width/1600/https://www.nexusmods.com/games/armoredcore6firesofrubicon?modSort=popular',
+        detail: [
+          '做了什么：重做装备数值与表现、强化差异化、调整玩法节奏与手感。',
+          '结果：NexusMod 装甲核心 6 分区最受欢迎 Mod 第 7 位。',
+          '可补充：关键改动列表 / 前后对比 / 数据截图。'
+        ]
+      },
+      {
+        id: 'elden-pvp',
+        title: '法环 PVP 平衡修改建议（文档）',
+        badge: 'Doc',
+        year: '2022.12 - 2023.04',
+        summary: '列举当前问题并拟定修改建议，协作翻译与撰写整篇文章。',
+        tags: ['PVP 平衡', '问题拆解', '文档表达'],
+        links: [
+          { label: 'Docs', url: 'https://docs.qq.com/doc/DTk5yTVlvVVdKSWhr' }
+        ],
+        bg: 'https://image.thum.io/get/width/1600/https://docs.qq.com/doc/DTk5yTVlvVVdKSWhr',
+        detail: [
+          '做了什么：问题列表化、提出改动方向、与合作者分工并完成撰写与翻译。',
+          '可以补强：挑 3 条“最有洞见/最可落地”的建议做成摘要。'
+        ]
+      },
+      {
+        id: 'booomjam',
+        title: '机核 BOOOMJAM 2025 ·《献眸者》',
+        badge: 'GameJam',
+        year: '2025.04 - 2025.05',
+        summary: '项目排期与管理，将想法拆解为可实现方案并落地；战斗玩法设计与开发制作。',
+        tags: ['策划+程序', '排期管理', '战斗玩法'],
+        links: [
+          { label: 'Gcores', url: 'https://www.gcores.com/games/148193' }
+        ],
+        bg: 'https://image.thum.io/get/width/1600/https://www.gcores.com/games/148193',
+        detail: [
+          '角色：策划、程序。',
+          '产出：排期与管理、战斗玩法方案拆解、实现与交付。'
+        ]
+      },
+      {
+        id: 'ciga48',
+        title: 'CIGA 48 小时 ·《伊丽莎白精神病院》',
+        badge: 'GameJam',
+        year: '2025.06',
+        summary: '控制器设计与开发。',
+        tags: ['输入方案', '快速落地'],
+        links: [
+          { label: 'GMHub', url: 'https://www.gmhub.com/game/7803' }
+        ],
+        bg: 'https://image.thum.io/get/width/1600/https://www.gmhub.com/game/7803',
+        detail: [
+          '角色：策划、程序。',
+          '产出：控制器设计与开发。'
+        ]
+      },
+      {
+        id: 'gmk2025',
+        title: 'GMTK 2025 GameJam · Switchguner',
+        badge: 'GameJam',
+        year: '2025.07 - 2025.08',
+        summary: '在模仿《血腥大陆》的基础上设计了新的玩法，并完成实现。',
+        tags: ['玩法设计', '快速迭代'],
+        links: [
+          { label: 'itch.io', url: 'https://duckkingsdfb.itch.io/switchguner' }
+        ],
+        bg: 'https://image.thum.io/get/width/1600/https://duckkingsdfb.itch.io/switchguner',
+        detail: [
+          '做了什么：基于参考玩法提出变化点，并完成实现。',
+          '可以补强：加入“设计目标/限制/核心 loop”的三段式说明。'
+        ]
+      },
+      {
+        id: 'combat-breakdown',
+        title: '忍龙 4 / 卡赞 打击感拆解（视频）',
+        badge: 'Video',
+        year: '2025',
+        summary: '从读招、镜头、音画反馈、硬直与判定等角度拆解打击感。',
+        tags: ['打击感', '分析', '表达'],
+        links: [
+          { label: '忍龙4', url: 'https://bilibili.com/video/BV17ZUuBLEWs/' },
+          { label: '卡赞', url: 'https://bilibili.com/video/BV1t8qWB6EzR/' }
+        ],
+        bg: 'https://image.thum.io/get/width/1600/https://bilibili.com/video/BV17ZUuBLEWs/',
+        detail: [
+          '建议：把结论提炼成 6~10 条“可复用的设计原则”，会非常加分。'
+        ]
+      }
+    ];
+
+    function q(name) {
+      const u = new URL(location.href);
+      return u.searchParams.get(name);
+    }
+
+    const id = q('id');
+    const p = PROJECTS.find(x => x.id === id);
+
+    const app = document.getElementById('app');
+    const bg = document.getElementById('bg');
+
+    function pill(label, url) {
+      const a = document.createElement('a');
+      a.className = 'pill';
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noreferrer';
+      a.textContent = label;
+      return a;
+    }
+
+    if (!p) {
+      app.innerHTML = `<div class="error">没找到作品：<b>${id || '(空)'}</b><br/>从主页进入：<a href="./#projects">./#projects</a></div>`;
+    } else {
+      if (p.bg) bg.style.backgroundImage = `url('${p.bg}')`;
+
+      const open = document.getElementById('openLink');
+      const mainLink = (p.links && p.links[0]) ? p.links[0].url : null;
+      if (mainLink) {
+        open.style.display = 'inline-flex';
+        open.href = mainLink;
+      }
+
+      const hero = document.createElement('div');
+      hero.className = 'hero';
+      hero.innerHTML = `
+        <div class="hero-top">
+          <div>
+            <div class="kicker">${(p.badge || 'Project')} · ${p.year || ''}</div>
+            <h1>${p.title}</h1>
+          </div>
+          <div class="tags">${(p.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+        <div class="content">
+          <p class="desc">${p.summary || ''}</p>
+          <div class="links" id="links"></div>
+          <ul class="points" id="points"></ul>
+          <div class="hint">背景为作品网页截图（由第三方缩略图服务生成）。如果你不想依赖第三方，我可以改成使用你自己上传到仓库的截图。</div>
+        </div>
+      `;
+
+      app.appendChild(hero);
+
+      const links = hero.querySelector('#links');
+      (p.links || []).forEach(l => links.appendChild(pill(l.label, l.url)));
+
+      const points = hero.querySelector('#points');
+      (p.detail || []).forEach(line => {
+        const li = document.createElement('li');
+        li.className = 'li';
+        li.textContent = line;
+        points.appendChild(li);
+      });
+
+      document.title = `${p.title} | Duckkings`;
+    }
+  </script>
+</body>
+</html>
