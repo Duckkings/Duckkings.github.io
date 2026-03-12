@@ -188,8 +188,25 @@
       line-height: 1.7;
     }
 
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 520ms ease, transform 520ms cubic-bezier(.2,.8,.2,1);
+      will-change: opacity, transform;
+    }
+
+    .reveal.reveal-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     @media (max-width: 560px) {
       h1 { font-size: 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none !important; }
     }
   </style>
 </head>
@@ -345,8 +362,24 @@
       return a;
     }
 
+    function setupReveal(root) {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add('reveal-in');
+            io.unobserve(e.target);
+          }
+        }
+      }, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+
+      (root || document).querySelectorAll('.reveal').forEach(n => io.observe(n));
+    }
+
     if (!p) {
-      app.innerHTML = `<div class="error">没找到作品：<b>${id || '(空)'}</b><br/>从主页进入：<a href="./#projects">./#projects</a></div>`;
+      app.innerHTML = `<div class="error reveal">没找到作品：<b>${id || '(空)'}</b><br/>从主页进入：<a href="./#projects">./#projects</a></div>`;
+      setupReveal(document);
     } else {
       if (p.bg) bg.style.backgroundImage = `url('${p.bg}')`;
 
@@ -358,7 +391,7 @@
       }
 
       const hero = document.createElement('div');
-      hero.className = 'hero';
+      hero.className = 'hero reveal';
       hero.innerHTML = `
         <div class="hero-top">
           <div>
@@ -368,10 +401,10 @@
           <div class="tags">${(p.tags || []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
         </div>
         <div class="content">
-          <p class="desc">${p.summary || ''}</p>
-          <div class="links" id="links"></div>
+          <p class="desc reveal">${p.summary || ''}</p>
+          <div class="links reveal" id="links"></div>
           <ul class="points" id="points"></ul>
-          <div class="hint">背景为作品网页截图（由第三方缩略图服务生成）。如果你不想依赖第三方，我可以改成使用你自己上传到仓库的截图。</div>
+          <div class="hint reveal">背景为作品网页截图（由第三方缩略图服务生成）。如果你不想依赖第三方，我可以改成使用你自己上传到仓库的截图。</div>
         </div>
       `;
 
@@ -383,12 +416,16 @@
       const points = hero.querySelector('#points');
       (p.detail || []).forEach(line => {
         const li = document.createElement('li');
-        li.className = 'li';
+        li.className = 'li reveal';
         li.textContent = line;
         points.appendChild(li);
       });
 
       document.title = `${p.title} | Duckkings`;
+
+      // reveal after dynamic nodes appended
+      setupReveal(hero);
+      requestAnimationFrame(() => hero.classList.add('reveal-in'));
     }
   </script>
 </body>
