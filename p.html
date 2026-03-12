@@ -19,6 +19,10 @@
       --max: 1080px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+
+      /* dynamic tint */
+      --tint: 0.34;
+      --h: 250;
     }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
@@ -44,8 +48,8 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(1000px 600px at 20% 10%, rgba(124,92,255,0.22), transparent 55%),
-        radial-gradient(1000px 600px at 90% 25%, rgba(23,209,255,0.18), transparent 60%),
+        radial-gradient(1000px 600px at 18% 10%, hsla(var(--h), 88%, 62%, calc(var(--tint) * 0.60)), transparent 55%),
+        radial-gradient(1000px 600px at 90% 25%, hsla(calc(var(--h) - 45), 92%, 58%, calc(var(--tint) * 0.52)), transparent 60%),
         linear-gradient(180deg, rgba(7,10,20,0.88), rgba(7,10,20,0.92));
       z-index: -1;
     }
@@ -362,6 +366,39 @@
       return a;
     }
 
+    function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
+    function setupDynamicTint() {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+
+      const root = document.documentElement;
+      let ticking = false;
+
+      function apply() {
+        ticking = false;
+        const max = Math.max(1, document.body.scrollHeight - window.innerHeight);
+        const t = clamp01(window.scrollY / max);
+
+        // slight hue drift to match index page feeling
+        const h = 250 - 40 * t;
+        const tint = 0.34 + 0.18 * t;
+
+        root.style.setProperty('--h', h.toFixed(1));
+        root.style.setProperty('--tint', tint.toFixed(3));
+      }
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(apply);
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      apply();
+    }
+
     function setupReveal(root) {
       const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (reduce) return;
@@ -380,6 +417,7 @@
     if (!p) {
       app.innerHTML = `<div class="error reveal">没找到作品：<b>${id || '(空)'}</b><br/>从主页进入：<a href="./#projects">./#projects</a></div>`;
       setupReveal(document);
+      setupDynamicTint();
     } else {
       if (p.bg) bg.style.backgroundImage = `url('${p.bg}')`;
 
@@ -425,6 +463,7 @@
 
       // reveal after dynamic nodes appended
       setupReveal(hero);
+      setupDynamicTint();
       requestAnimationFrame(() => hero.classList.add('reveal-in'));
     }
   </script>

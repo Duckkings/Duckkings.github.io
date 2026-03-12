@@ -9,8 +9,15 @@
 
   <style>
     :root {
-      --bg: #0b1020;
+      --bg: #070a14;
       --bg2: #0a1630;
+      /* dynamic background (set by JS on scroll) */
+      --h1: 255;
+      --h2: 195;
+      --h3: 145;
+      --a1: 0.26;
+      --a2: 0.18;
+      --a3: 0.10;
       --card: rgba(255, 255, 255, 0.06);
       --card2: rgba(255, 255, 255, 0.09);
       --text: rgba(255, 255, 255, 0.92);
@@ -36,9 +43,9 @@
       font-family: var(--sans);
       color: var(--text);
       background:
-        radial-gradient(1200px 700px at 15% 10%, rgba(124, 92, 255, 0.25), transparent 55%),
-        radial-gradient(1000px 700px at 85% 20%, rgba(23, 209, 255, 0.18), transparent 60%),
-        radial-gradient(900px 700px at 55% 95%, rgba(46, 229, 157, 0.10), transparent 55%),
+        radial-gradient(1200px 760px at 12% 8%, hsla(var(--h1), 88%, 62%, var(--a1)), transparent 58%),
+        radial-gradient(1100px 760px at 88% 18%, hsla(var(--h2), 92%, 58%, var(--a2)), transparent 62%),
+        radial-gradient(1000px 760px at 55% 100%, hsla(var(--h3), 88%, 56%, var(--a3)), transparent 58%),
         linear-gradient(180deg, var(--bg), var(--bg2));
       overflow-x: hidden;
     }
@@ -730,6 +737,49 @@
       }
     ];
 
+    // ====== Dynamic background (scroll) ======
+    function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
+    function setupDynamicBg() {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+
+      const root = document.documentElement;
+      let ticking = false;
+
+      function apply() {
+        ticking = false;
+        const max = Math.max(1, document.body.scrollHeight - window.innerHeight);
+        const t = clamp01(window.scrollY / max);
+
+        // Carefully-tuned palette shift (violet -> cyan -> green)
+        const h1 = 255 - 18 * t;   // 255 -> 237
+        const h2 = 195 + 35 * t;   // 195 -> 230
+        const h3 = 145 - 25 * t;   // 145 -> 120
+
+        const a1 = 0.26 - 0.06 * t;
+        const a2 = 0.18 + 0.05 * t;
+        const a3 = 0.10 + 0.04 * t;
+
+        root.style.setProperty('--h1', h1.toFixed(1));
+        root.style.setProperty('--h2', h2.toFixed(1));
+        root.style.setProperty('--h3', h3.toFixed(1));
+        root.style.setProperty('--a1', a1.toFixed(3));
+        root.style.setProperty('--a2', a2.toFixed(3));
+        root.style.setProperty('--a3', a3.toFixed(3));
+      }
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(apply);
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+      apply();
+    }
+
     // ====== Scroll reveal ======
     function setupReveal() {
       const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -876,8 +926,9 @@
       });
     });
 
-    // Run reveal after DOM + dynamic project cards are in place
+    // Run effects after DOM + dynamic project cards are in place
     setupReveal();
+    setupDynamicBg();
   </script>
 </body>
 </html>
