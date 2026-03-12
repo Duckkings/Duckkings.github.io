@@ -314,6 +314,19 @@
       .card.tilt-ready:hover {
         transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px);
         border-color: rgba(255,255,255,0.22);
+        box-shadow:
+          0 24px 90px rgba(0,0,0,0.55),
+          0 0 0 1px rgba(124,92,255,0.14) inset,
+          0 0 42px rgba(23,209,255,0.10);
+      }
+
+      .card.tilt-ready .thumb {
+        transition: transform 220ms ease;
+        transform: translateZ(0);
+      }
+
+      .card.tilt-ready:hover .thumb {
+        transform: scale(1.03);
       }
     }
 
