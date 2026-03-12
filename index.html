@@ -281,9 +281,41 @@
       transition: transform .15s ease, background .15s ease, border-color .15s ease;
       position: relative;
       text-decoration: none;
+      transform-style: preserve-3d;
     }
 
     .card:hover { text-decoration: none; }
+
+    /* Card hover tilt + sheen (desktop only; JS toggles .tilt-ready) */
+    @media (hover: hover) and (pointer: fine) {
+      .card.tilt-ready {
+        transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+        will-change: transform;
+      }
+
+      .card.tilt-ready::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        background: radial-gradient(
+          320px 260px at var(--mx, 50%) var(--my, 40%),
+          rgba(255,255,255,0.16),
+          rgba(255,255,255,0.04) 40%,
+          transparent 65%
+        );
+        opacity: 0;
+        transition: opacity 180ms ease;
+        pointer-events: none;
+        mix-blend-mode: screen;
+      }
+
+      .card.tilt-ready:hover::before { opacity: 1; }
+
+      .card.tilt-ready:hover {
+        transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-3px);
+        border-color: rgba(255,255,255,0.22);
+      }
+    }
 
     .card:hover {
       transform: translateY(-2px);
@@ -951,9 +983,50 @@
       });
     });
 
+    function setupCardTilt() {
+      const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+      if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.classList.add('tilt-ready');
+
+        function move(ev) {
+          const r = card.getBoundingClientRect();
+          const px = (ev.clientX - r.left) / r.width;   // 0..1
+          const py = (ev.clientY - r.top) / r.height;   // 0..1
+
+          const dx = (px - 0.5);
+          const dy = (py - 0.5);
+
+          // subtle tilt
+          const ry = (dx * 7).toFixed(2) + 'deg';
+          const rx = (-dy * 6).toFixed(2) + 'deg';
+
+          card.style.setProperty('--rx', rx);
+          card.style.setProperty('--ry', ry);
+          card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+          card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+        }
+
+        function leave() {
+          card.style.setProperty('--rx', '0deg');
+          card.style.setProperty('--ry', '0deg');
+          card.style.setProperty('--mx', '50%');
+          card.style.setProperty('--my', '40%');
+        }
+
+        card.addEventListener('mousemove', move);
+        card.addEventListener('mouseleave', leave);
+        leave();
+      });
+    }
+
     // Run effects after DOM + dynamic project cards are in place
     setupReveal();
     setupDynamicBg();
+    setupCardTilt();
   </script>
 </body>
 </html>
