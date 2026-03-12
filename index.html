@@ -62,6 +62,26 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
     }
 
+    /* Scroll progress */
+    .scrollbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 80;
+      background: rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+
+    .scrollbar__bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(124,92,255,0.95), rgba(23,209,255,0.95), rgba(46,229,157,0.90));
+      box-shadow: 0 0 18px rgba(23,209,255,0.35);
+      transition: width 80ms linear;
+    }
+
     .container { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
 
     header {
@@ -441,6 +461,7 @@
 
 <body>
   <div class="noise"></div>
+  <div class="scrollbar" aria-hidden="true"><div class="scrollbar__bar" id="scrollbarBar"></div></div>
 
   <header>
     <div class="container">
@@ -745,6 +766,7 @@
       if (reduce) return;
 
       const root = document.documentElement;
+      const bar = document.getElementById('scrollbarBar');
       let ticking = false;
 
       function apply() {
@@ -767,6 +789,9 @@
         root.style.setProperty('--a1', a1.toFixed(3));
         root.style.setProperty('--a2', a2.toFixed(3));
         root.style.setProperty('--a3', a3.toFixed(3));
+
+        // Scroll progress bar
+        if (bar) bar.style.width = `${(t * 100).toFixed(2)}%`;
       }
 
       function onScroll() {

@@ -34,6 +34,26 @@
       overflow-x: hidden;
     }
 
+    /* Scroll progress */
+    .scrollbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      z-index: 80;
+      background: rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+
+    .scrollbar__bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(124,92,255,0.95), rgba(23,209,255,0.95), rgba(46,229,157,0.90));
+      box-shadow: 0 0 18px rgba(23,209,255,0.35);
+      transition: width 80ms linear;
+    }
+
     .bg {
       position: fixed;
       inset: 0;
@@ -215,6 +235,7 @@
   </style>
 </head>
 <body>
+  <div class="scrollbar" aria-hidden="true"><div class="scrollbar__bar" id="scrollbarBar"></div></div>
   <div class="bg" id="bg"></div>
   <div class="veil"></div>
 
@@ -373,6 +394,7 @@
       if (reduce) return;
 
       const root = document.documentElement;
+      const bar = document.getElementById('scrollbarBar');
       let ticking = false;
 
       function apply() {
@@ -386,6 +408,8 @@
 
         root.style.setProperty('--h', h.toFixed(1));
         root.style.setProperty('--tint', tint.toFixed(3));
+
+        if (bar) bar.style.width = `${(t * 100).toFixed(2)}%`;
       }
 
       function onScroll() {
